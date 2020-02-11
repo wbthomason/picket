@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+  <head>
+    <link href="http://gmpg.org/xfn/11" rel="profile" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1"
+    />
+    <title>picket</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Overpass"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script>
+      function textResizer(event) {
+        event.target.setAttribute("size", event.target.value.length);
+      }
+
+      function setupPickers() {
+        addPicker();
+      }
+
+      function pickAll() {
+        const resultsDisplay = document.querySelector("#resultdisplay");
+        resultsDisplay.innerHTML = "";
+        const pickers = document.querySelectorAll(".picker-container");
+        for (let idx = 0; idx < pickers.length; ++idx) {
+          const picker = pickers[idx];
+          let name = picker.querySelector('[name="name"]');
+          const quantity = parseInt(
+            picker.querySelector('[name="quantity"]').value
+          );
+
+          const die = parseInt(picker.querySelector('[name="die"]').value);
+
+          if (!name.value) {
+            name = `Result ${idx + 1}`;
+          } else {
+            name = name.value;
+          }
+
+          let results = [];
+          for (let result = 0; result < quantity; ++result) {
+            results.push(Math.floor(Math.random() * die) + 1);
+          }
+
+          const resultString = results.join(", ");
+          resultsDisplay.appendChild(
+            document.createTextNode(`${name}: ${resultString}`)
+          );
+          resultsDisplay.appendChild(document.createElement("br"));
+        }
+      }
+
+      function addPicker() {
+        const newPicker = document.createElement("div");
+        newPicker.className = "picker-container";
+
+        // New "name" field
+        const newName = document.createElement("input");
+        newName.type = "text";
+        newName.className = "picker";
+        newName.setAttribute("placeholder", "(name)");
+        newName.setAttribute("name", "name");
+        newName.setAttribute("size", 6);
+        newName.addEventListener("change", textResizer);
+        newPicker.appendChild(newName);
+        newPicker.appendChild(document.createTextNode(": "));
+
+        // New "quantity" field
+        const newQuantity = document.createElement("input");
+        newQuantity.type = "text";
+        newQuantity.className = "picker";
+        newQuantity.setAttribute("value", "1");
+        newQuantity.setAttribute("name", "quantity");
+        newQuantity.addEventListener("change", textResizer);
+        textResizer({ target: newQuantity });
+        newPicker.appendChild(newQuantity);
+        newPicker.appendChild(document.createTextNode(" d"));
+
+        // New "die" field
+        const newDie = document.createElement("input");
+        newDie.type = "text";
+        newDie.className = "picker";
+        newDie.setAttribute("value", "20");
+        newDie.setAttribute("name", "die");
+        newDie.addEventListener("change", textResizer);
+        textResizer({ target: newDie });
+        newPicker.appendChild(newDie);
+
+        document.querySelector("#pickers").appendChild(newPicker);
+      }
+    </script>
+  </head>
+  <body onload="setupPickers()">
+    <div class="wrap">
+      <div class="container content">
+        <main class="page">
+          <h1 class="headline">What do you need to pick?</h1>
+          <div class="main">
+            <div id="controls" class="controls">
+              <input type="button" value="Add another" onclick="addPicker()" />
+              <input type="button" value="Pick" onclick="pickAll()" />
+            </div>
+            <div id="pickers" class="pickers"></div>
+            <div id="results" class="results">
+              <p id="resultdisplay"></p>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
